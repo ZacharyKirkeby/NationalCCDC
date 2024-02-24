@@ -2656,10 +2656,7 @@ K3hWNASBk4UAUVw4iq5ystEtD0sLQUI3bu3qf//Z
             </hip-profiles>
             <custom-url-category/>
           </profiles>
-          <application-filter>
-            <deleted name="Garcia loves chunkymonkey" admin="admin" dirtyId="5" time="2024/01/27 11:59:31"/>
-            <deleted name="Garcia loves chunkymonkey" admin="admin" dirtyId="5" time="2024/01/27 11:59:31"/>
-          </application-filter>
+          <application-filter/>
           <threats>
             <vulnerability>
               <entry name="41111">
