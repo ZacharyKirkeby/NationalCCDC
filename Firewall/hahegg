@@ -457,19 +457,6 @@
               <layer3>
                 <ipv6>
                   <neighbor-discovery>
-                    <router-advertisement>
-                      <enable>no</enable>
-                      <min-interval>200</min-interval>
-                      <max-interval>600</max-interval>
-                      <hop-limit>64</hop-limit>
-                      <reachable-time>unspecified</reachable-time>
-                      <retransmission-timer>unspecified</retransmission-timer>
-                      <lifetime>1800</lifetime>
-                      <managed-flag>no</managed-flag>
-                      <other-flag>no</other-flag>
-                      <enable-consistency-check>no</enable-consistency-check>
-                      <link-mtu>unspecified</link-mtu>
-                    </router-advertisement>
                     <enable-dad>no</enable-dad>
                     <reachable-time>30</reachable-time>
                     <ns-interval>1</ns-interval>
@@ -477,12 +464,37 @@
                   </neighbor-discovery>
                   <enabled>no</enabled>
                   <interface-id>EUI-64</interface-id>
+                  <address>
+                    <entry name="FC00:CAFE::240:2/32">
+                      <advertise>
+                        <enable>no</enable>
+                        <valid-lifetime>2592000</valid-lifetime>
+                        <preferred-lifetime>604800</preferred-lifetime>
+                        <onlink-flag>yes</onlink-flag>
+                        <auto-config-flag>yes</auto-config-flag>
+                      </advertise>
+                      <enable-on-interface>yes</enable-on-interface>
+                    </entry>
+                  </address>
                 </ipv6>
                 <untagged-sub-interface>no</untagged-sub-interface>
                 <interface-management-profile>Base</interface-management-profile>
                 <ip>
                   <entry name="172.20.240.254/24"/>
                 </ip>
+                <ndp-proxy>
+                  <enabled>no</enabled>
+                </ndp-proxy>
+                <sdwan-link-settings>
+                  <upstream-nat>
+                    <enable>no</enable>
+                    <static-ip/>
+                  </upstream-nat>
+                  <enable>no</enable>
+                </sdwan-link-settings>
+                <lldp>
+                  <enable>no</enable>
+                </lldp>
               </layer3>
             </entry>
             <entry name="ethernet1/3">
@@ -559,12 +571,12 @@
               <http>yes</http>
               <https>yes</https>
               <http-ocsp>yes</http-ocsp>
-              <ssh>yes</ssh>
+              <ssh>no</ssh>
               <snmp>yes</snmp>
               <userid-service>yes</userid-service>
               <ping>yes</ping>
               <response-pages>yes</response-pages>
-              <telnet>yes</telnet>
+              <telnet>no</telnet>
             </entry>
           </interface-management-profile>
         </profiles>
@@ -858,29 +870,7 @@
             </entry>
           </interface>
         </dhcp>
-        <dns-proxy>
-          <entry name="mark">
-            <default>
-              <primary>8.8.8.8</primary>
-            </default>
-            <cache>
-              <enabled>yes</enabled>
-            </cache>
-            <tcp-queries>
-              <enabled>no</enabled>
-            </tcp-queries>
-            <domain-servers>
-              <entry name="changm3">
-                <domain-name>
-                  <member>www.blah.com</member>
-                </domain-name>
-                <cacheable>no</cacheable>
-                <primary>8.8.8.8</primary>
-              </entry>
-            </domain-servers>
-            <enabled>no</enabled>
-          </entry>
-        </dns-proxy>
+        <dns-proxy/>
       </network>
       <deviceconfig>
         <system>
@@ -2108,6 +2098,17 @@ K3hWNASBk4UAUVw4iq5ystEtD0sLQUI3bu3qf//Z
                   </destination-hip>
                   <action>allow</action>
                   <rule-type>universal</rule-type>
+                  <profile-setting>
+                    <profiles>
+                      <data-filtering>
+                        <member>sample_office_docs</member>
+                      </data-filtering>
+                    </profiles>
+                  </profile-setting>
+                  <log-start>yes</log-start>
+                  <tag>
+                    <member>CONFIDENTIAL</member>
+                  </tag>
                 </entry>
                 <entry name="allow out serv" uuid="46bd42f1-4307-44a5-8add-819c9598f490">
                   <to>
@@ -2512,16 +2513,154 @@ K3hWNASBk4UAUVw4iq5ystEtD0sLQUI3bu3qf//Z
             <application-override>
               <rules/>
             </application-override>
+            <qos>
+              <rules>
+                <entry name="SCORED SERV TIER3" uuid="3ed64d6a-81eb-46c1-a379-7a88e6599151">
+                  <dscp-tos>
+                    <codepoints>
+                      <entry name="AF13">
+                        <af>
+                          <codepoint>af13</codepoint>
+                        </af>
+                      </entry>
+                    </codepoints>
+                  </dscp-tos>
+                  <from>
+                    <member>any</member>
+                  </from>
+                  <to>
+                    <member>any</member>
+                  </to>
+                  <source>
+                    <member>any</member>
+                  </source>
+                  <destination>
+                    <member>any</member>
+                  </destination>
+                  <source-user>
+                    <member>any</member>
+                  </source-user>
+                  <category>
+                    <member>any</member>
+                  </category>
+                  <application>
+                    <member>active-directory</member>
+                    <member>dns</member>
+                    <member>web-browsing</member>
+                  </application>
+                  <service>
+                    <member>service-http</member>
+                    <member>service-https</member>
+                  </service>
+                  <source-hip>
+                    <member>any</member>
+                  </source-hip>
+                  <destination-hip>
+                    <member>any</member>
+                  </destination-hip>
+                  <action>
+                    <class>1</class>
+                  </action>
+                </entry>
+                <entry name="SCORED SERV TIER2" uuid="108f83bd-7ee1-4dff-85de-75c20c4573a4">
+                  <dscp-tos>
+                    <codepoints>
+                      <entry name="AF12">
+                        <af>
+                          <codepoint>af12</codepoint>
+                        </af>
+                      </entry>
+                    </codepoints>
+                  </dscp-tos>
+                  <from>
+                    <member>any</member>
+                  </from>
+                  <to>
+                    <member>any</member>
+                  </to>
+                  <source>
+                    <member>any</member>
+                  </source>
+                  <destination>
+                    <member>any</member>
+                  </destination>
+                  <source-user>
+                    <member>any</member>
+                  </source-user>
+                  <category>
+                    <member>any</member>
+                  </category>
+                  <application>
+                    <member>ntp</member>
+                    <member>smtp</member>
+                  </application>
+                  <service>
+                    <member>any</member>
+                  </service>
+                  <source-hip>
+                    <member>any</member>
+                  </source-hip>
+                  <destination-hip>
+                    <member>any</member>
+                  </destination-hip>
+                  <action>
+                    <class>1</class>
+                  </action>
+                </entry>
+                <entry name="SCORED SERV TIER1" uuid="adb0c07d-f2d7-4f0f-ab6d-96523c565509">
+                  <dscp-tos>
+                    <codepoints>
+                      <entry name="AF11">
+                        <af>
+                          <codepoint>af11</codepoint>
+                        </af>
+                      </entry>
+                    </codepoints>
+                  </dscp-tos>
+                  <from>
+                    <member>any</member>
+                  </from>
+                  <to>
+                    <member>any</member>
+                  </to>
+                  <source>
+                    <member>any</member>
+                  </source>
+                  <destination>
+                    <member>any</member>
+                  </destination>
+                  <source-user>
+                    <member>any</member>
+                  </source-user>
+                  <category>
+                    <member>any</member>
+                  </category>
+                  <application>
+                    <member>pop3</member>
+                    <member>spotify</member>
+                    <member>xbox-live</member>
+                    <member>youtube</member>
+                  </application>
+                  <service>
+                    <member>any</member>
+                  </service>
+                  <source-hip>
+                    <member>any</member>
+                  </source-hip>
+                  <destination-hip>
+                    <member>any</member>
+                  </destination-hip>
+                  <action>
+                    <class>1</class>
+                  </action>
+                </entry>
+              </rules>
+            </qos>
           </rulebase>
           <global-protect>
             <global-protect-gateway/>
             <global-protect-portal/>
-            <global-protect-mdm>
-              <entry name="travis">
-                <host>1.2.3.4</host>
-                <port>1234</port>
-              </entry>
-            </global-protect-mdm>
+            <global-protect-mdm/>
           </global-protect>
           <import>
             <network>
@@ -2554,7 +2693,45 @@ K3hWNASBk4UAUVw4iq5ystEtD0sLQUI3bu3qf//Z
                 <description>I hope I don't get fired.</description>
               </entry>
             </hip-objects>
-            <data-objects/>
+            <data-objects>
+              <entry name="OFFICE">
+                <pattern-type>
+                  <file-properties>
+                    <pattern>
+                      <entry name="word">
+                        <file-type>docx</file-type>
+                        <file-property>panav-rsp-office-dlp-keywords</file-property>
+                        <property-value>office</property-value>
+                      </entry>
+                      <entry name="pp">
+                        <file-type>pptx</file-type>
+                        <file-property>panav-rsp-office-dlp-keywords</file-property>
+                        <property-value>office</property-value>
+                      </entry>
+                      <entry name="excel">
+                        <file-type>xlsx</file-type>
+                        <file-property>panav-rsp-office-dlp-keywords</file-property>
+                        <property-value>office</property-value>
+                      </entry>
+                    </pattern>
+                  </file-properties>
+                </pattern-type>
+                <description>office documents and pdfs</description>
+              </entry>
+              <entry name="PDF">
+                <pattern-type>
+                  <file-properties>
+                    <pattern>
+                      <entry name="ADB_PDF">
+                        <file-type>pdf</file-type>
+                        <file-property>panav-rsp-pdf-dlp-keywords</file-property>
+                        <property-value>PDF</property-value>
+                      </entry>
+                    </pattern>
+                  </file-properties>
+                </pattern-type>
+              </entry>
+            </data-objects>
             <hip-profiles>
               <entry name="PAN-SA-2015-0006">
                 <match>not "Brian"</match>
@@ -2563,19 +2740,28 @@ K3hWNASBk4UAUVw4iq5ystEtD0sLQUI3bu3qf//Z
             </hip-profiles>
             <custom-url-category/>
             <dos-protection/>
+            <data-filtering>
+              <entry name="sample_office_docs">
+                <rules>
+                  <entry name="rule0">
+                    <application>
+                      <member>any</member>
+                    </application>
+                    <file-type>
+                      <member>any</member>
+                    </file-type>
+                    <direction>both</direction>
+                    <alert-threshold>0</alert-threshold>
+                    <block-threshold>0</block-threshold>
+                    <data-object>OFFICE</data-object>
+                    <log-severity>informational</log-severity>
+                  </entry>
+                </rules>
+              </entry>
+              <entry name="sample"/>
+            </data-filtering>
           </profiles>
-          <application-filter>
-            <entry name="Garcia loves chunkymonkey">
-              <category>
-                <member>business-systems</member>
-                <member>collaboration</member>
-                <member>general-internet</member>
-                <member>media</member>
-                <member>networking</member>
-                <member>unknown</member>
-              </category>
-            </entry>
-          </application-filter>
+          <application-filter/>
           <threats>
             <vulnerability>
               <entry name="41111">
@@ -2614,6 +2800,9 @@ K3hWNASBk4UAUVw4iq5ystEtD0sLQUI3bu3qf//Z
           <user-id-collector>
             <setting/>
           </user-id-collector>
+          <tag>
+            <entry name="CONFIDENTIAL"/>
+          </tag>
         </entry>
       </vsys>
     </entry>
