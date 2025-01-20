@@ -20,7 +20,35 @@ Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Par
 #restart services
 Restart-Service TermService -Force
 
+# SSH hardening
 
+Copy-Item -Path $sshConfigPath -Destination "$sshConfigPath.bak" -Force
+
+# Define SSH hardening settings
+$sshSettings = @"
+# SSH Hardening Settings
+PasswordAuthentication no
+PermitEmptyPasswords no
+PermitRootLogin no
+PubkeyAuthentication yes
+X11Forwarding no
+ClientAliveInterval 300
+ClientAliveCountMax 0
+"@
+
+# Apply the SSH hardening settings
+Write-Host "Applying SSH hardening settings..."
+Add-Content -Path $sshConfigPath -Value $sshSettings
+
+# Restart SSH service to apply changes
+Write-Host "Restarting SSH service..."
+Restart-Service -Name sshd
+
+
+# Enable UAC
+Write-Host "Enabling User Account Control (UAC)..."
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" -Value 1 -Force
+Write-Host "UAC has been enabled."
 
 #install firefox
 Invoke-WebRequest -Uri "https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US" -OutFile "$env:administrator\Downloads\FirefoxSetup.exe"
