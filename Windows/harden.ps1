@@ -20,6 +20,32 @@ Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Par
 #restart services
 Restart-Service TermService -Force
 
+# SSH hardening
+
+Copy-Item -Path $sshConfigPath -Destination "$sshConfigPath.bak" -Force
+
+# Define SSH hardening settings
+$sshSettings = @"
+# SSH Hardening Settings
+PasswordAuthentication no
+PermitEmptyPasswords no
+PermitRootLogin no
+PubkeyAuthentication yes
+X11Forwarding no
+ClientAliveInterval 300
+ClientAliveCountMax 0
+"@
+
+# Apply the SSH hardening settings
+Write-Host "Applying SSH hardening settings..."
+Add-Content -Path $sshConfigPath -Value $sshSettings
+
+# Restart SSH service to apply changes
+Write-Host "Restarting SSH service..."
+Restart-Service -Name sshd
+
+
+
 
 
 #install firefox
