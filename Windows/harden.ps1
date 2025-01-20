@@ -45,8 +45,10 @@ Write-Host "Restarting SSH service..."
 Restart-Service -Name sshd
 
 
-
-
+# Enable UAC
+Write-Host "Enabling User Account Control (UAC)..."
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLUA" -Value 1 -Force
+Write-Host "UAC has been enabled."
 
 #install firefox
 Invoke-WebRequest -Uri "https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US" -OutFile "$env:administrator\Downloads\FirefoxSetup.exe"
